@@ -1,0 +1,3 @@
+[submodule "Logic-2048-FPGA"]
+	path = Logic-2048-FPGA
+	url = https://github.com/Tagussan/Logic-2048-FPGA.git
