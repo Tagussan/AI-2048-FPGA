@@ -4,6 +4,7 @@ input rst;
 input [1:0] restrected;
 input [2:0] restrect_prob;
 input [79:0] initial_board;
+input [7:0] seed;
 output [14:0] max_move_count;
 output [31:0] total_move_count;
 output [31:0] total_trial_count;
@@ -14,8 +15,11 @@ reg [31:0] total_trial_count;
 reg logicRst;
 wire stuck;
 wire logic_calc_done;
+wire random_clk;
+wire [31:0] random;
 wire [14:0] succ_count
-logic2048 logic(.clk(clk), .rst(logicRst), .calc_done(logic_calc_done), .random(), .random_clk(), .initial_board(initial_board), .restrected(restrected), .restrected_prob(restrected_prob), .stuck(stuck), .succ_count(succ_count));
+xorshift32 rnd(.clk(random_clk), .random_rst(rst), .res(random), .seed(seed));
+logic2048 logic(.clk(clk), .rst(logicRst), .calc_done(logic_calc_done), .random(random[22:0]), .random_clk(random_clk), .initial_board(initial_board), .restrected(restrected), .restrected_prob(restrected_prob), .stuck(stuck), .succ_count(succ_count));
 always @(posedge clk) begin
     if(rst) begin
         max_move_count <= 0;
@@ -41,5 +45,3 @@ always @(posedge clk) begin
     end
 end
 endmodule
-
-
