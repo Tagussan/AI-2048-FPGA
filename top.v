@@ -6,9 +6,10 @@ wire [7:0] int_wr_data, int_rd_data;
 wire int_write, int_read;
 wire int_req, int_gnt;
 wire calc_clk, uart_clk;
-//calc_clk = 100MHz, uart_clk = 40MHz
-uart2bus_top uart(.clock(uart_clk), .reset(rst), .ser_in(ser_in), .ser_out(ser_out), .int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write), .int_read(int_read), .int_rd_data(int_rd_data), .int_req(int_req), .int_gnt(1'b1));
-virtualBusControler cntr(.clk(calc_clk), .rst(rst), .int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write), .int_read(int_read), .int_rd_data(int_rd_data), .int_req(int_req), .int_gnt(int_gnt));
+//.c0 calc_clk = 100MHz, .c1 uart_clk = 40MHz
+clk_src clk_src(.areset(rst), .inclk0(clk), .c0(calc_clk), .c1(uart_clk));
+uart2bus_top uart(.clock(calc_clk), .reset(rst), .ser_in(ser_in), .ser_out(ser_out), .int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write), .int_read(int_read), .int_rd_data(int_rd_data), .int_req(int_req), .int_gnt(1'b1));
+virtualBusControler cntr(.clk(uart_clk), .rst(rst), .int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write), .int_read(int_read), .int_rd_data(int_rd_data), .int_req(int_req), .int_gnt(int_gnt));
 endmodule
 
 module virtualBusControler(.clk(clk), .rst(rst), int_address, int_wr_data, int_write, int_read, int_rd_data, int_req, int_gnt);
@@ -32,10 +33,10 @@ wire [31:0] total_trial_count0, total_trial_count1, total_trial_count2, total_tr
 wire [79:0] initial_board;
 assign initial_board = {grid[15], grid[14], grid[13], grid[12], grid[11], grid[10], grid[9], grid[8], grid[7], grid[6], grid[5], grid[4], grid[3], grid[2], grid[1], grid[0]};
 
-monteCarloStat monte1(.clk(clk), .rst(monte_rst), .restrected(2'd0), .restrect_prob(3'd1), .max_move_count(max_move_count0), .total_move_count(total_move_count0), .total_trial_count(total_trial_count0), .initial_board(initial_board), .seed(seed));
+monteCarloStat monte0(.clk(clk), .rst(monte_rst), .restrected(2'd0), .restrect_prob(3'd1), .max_move_count(max_move_count0), .total_move_count(total_move_count0), .total_trial_count(total_trial_count0), .initial_board(initial_board), .seed(seed));
 monteCarloStat monte1(.clk(clk), .rst(monte_rst), .restrected(2'd1), .restrect_prob(3'd1), .max_move_count(max_move_count1), .total_move_count(total_move_count1), .total_trial_count(total_trial_count1), .initial_board(initial_board), .seed(seed));
-monteCarloStat monte1(.clk(clk), .rst(monte_rst), .restrected(2'd2), .restrect_prob(3'd1), .max_move_count(max_move_count2), .total_move_count(total_move_count2), .total_trial_count(total_trial_count2), .initial_board(initial_board), .seed(seed));
-monteCarloStat monte1(.clk(clk), .rst(monte_rst), .restrected(2'd3), .restrect_prob(3'd1), .max_move_count(max_move_count3), .total_move_count(total_move_count3), .total_trial_count(total_trial_count3), .initial_board(initial_board), .seed(seed));
+monteCarloStat monte2(.clk(clk), .rst(monte_rst), .restrected(2'd2), .restrect_prob(3'd1), .max_move_count(max_move_count2), .total_move_count(total_move_count2), .total_trial_count(total_trial_count2), .initial_board(initial_board), .seed(seed));
+monteCarloStat monte3(.clk(clk), .rst(monte_rst), .restrected(2'd3), .restrect_prob(3'd1), .max_move_count(max_move_count3), .total_move_count(total_move_count3), .total_trial_count(total_trial_count3), .initial_board(initial_board), .seed(seed));
 
 always @(posedge clk) begin
     if(rst) begin
