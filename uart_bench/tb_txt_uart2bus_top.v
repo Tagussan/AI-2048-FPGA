@@ -50,23 +50,48 @@ begin
 	serial_out = 1;
 
 	// transmit a write command to internal register file 
-	// command string: "w 4cd9 1a" + CR 
-	send_serial (8'h77, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0); 
+	// command string: "w data(xx) addr(xxxx)" + CR 
+	send_serial (8'h77, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//w
 	#100;
-	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//sp
 	#100;
-	send_serial (8'h64, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
 	#100;
-	send_serial (8'h39, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h31, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//1
 	#100;
-	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//sp
 	#100;
-	send_serial (8'h31, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
 	#100;
-	send_serial (8'h61, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
 	#100;
-	send_serial (8'h0d, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
 	#100;
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
+	#100;
+	send_serial (8'h0d, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//<CR>
+	#100;
+	send_serial (8'h77, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//w
+	#100;
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//sp
+	#100;
+	send_serial (8'h31, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//1
+	#100;
+	send_serial (8'h36, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//6
+	#100;
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//sp
+	#100;
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
+	#100;
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
+	#100;
+	send_serial (8'h30, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//0
+	#100;
+	send_serial (8'h31, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//1
+	#100;
+	send_serial (8'h0d, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);//<CR>
+	#100;
+        #10000000
 	// transmit a read command from register file 
 	// command string: "r 1a" + CR 
 	send_serial (8'h72, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0); 
@@ -127,45 +152,14 @@ end
 //------------------------------------------------------------------
 // device under test 
 // DUT interface 
-wire	[15:0]	int_address;	// address bus to register file 
-wire	[7:0]	int_wr_data;	// write data to register file 
-wire			int_write;		// write control to register file 
-wire			int_read;		// read control to register file 
-wire	[7:0]	int_rd_data;	// data read from register file 
-wire			int_req;		// bus access request signal 
-wire			int_gnt;		// bus access grant signal 
-wire			ser_in;			// DUT serial input 
-wire			ser_out;		// DUT serial output 
-
+wire ser_in, ser_out;
 // DUT instance 
-uart2bus_top uart2bus1
-(
-	.clock(clock), 
-	.reset(reset),
-	.ser_in(ser_in), 
-	.ser_out(ser_out),
-	.int_address(int_address), 
-	.int_wr_data(int_wr_data), 
-	.int_write(int_write),
-	.int_rd_data(int_rd_data), 
-	.int_read(int_read), 
-	.int_req(int_req), 
-	.int_gnt(int_gnt) 
-);
-// bus grant is always active 
-assign int_gnt = 1'b1;
+top top(.clk(clock), .rst(reset), .ser_in(ser_in), .ser_out(ser_out));
 
 // serial interface to test bench 
 assign ser_in = serial_out;
 always @ (posedge clock) serial_in = ser_out;
 
-// register file model 
-reg_file_model reg_file1 
-(
-	.clock(clock), .reset(reset),
-	.int_address(int_address[7:0]), .int_wr_data(int_wr_data), .int_write(int_write),
-	.int_rd_data(int_rd_data), .int_read(int_read)
-);
 
 endmodule
 //---------------------------------------------------------------------------------------

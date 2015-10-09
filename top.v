@@ -1,4 +1,4 @@
-module top(clk, rst, ser_in, ser_out);
+module top(clk, rst, ser_in, ser_out, calc_clk, uart_clk);
 input clk, rst, ser_in;
 output ser_out;
 wire [15:0] int_address;
@@ -7,7 +7,7 @@ wire int_write, int_read;
 wire int_req, int_gnt;
 wire calc_clk, uart_clk;
 //.c0 calc_clk = 100MHz, .c1 uart_clk = 40MHz
-clk_src clk_src(.areset(rst), .inclk0(clk), .c0(calc_clk), .c1(uart_clk));
+//clk_src clk_src(.areset(rst), .inclk0(clk), .c0(calc_clk), .c1(uart_clk));
 uart2bus_top uart(.clock(calc_clk), .reset(rst), .ser_in(ser_in), .ser_out(ser_out), .int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write), .int_read(int_read), .int_rd_data(int_rd_data), .int_req(int_req), .int_gnt(1'b1));
 virtualBusControler cntr(.clk(uart_clk), .rst(rst), .int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write), .int_read(int_read), .int_rd_data(int_rd_data), .int_req(int_req), .int_gnt(int_gnt));
 endmodule
