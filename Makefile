@@ -1,6 +1,6 @@
-MAIN = monteCarloStat
-BENCH = tb_monteCarloStat
-SOURCES = Logic-2048-FPGA/random-seq-gen/*.v Logic-2048-FPGA/*.v *.v
+MAIN = test
+BENCH = test
+SOURCES = Logic-2048-FPGA/random-seq-gen/*.v Logic-2048-FPGA/*.v uart2bus/*.v top.v monteCarloStat.v uart_bench/tb_txt_uart2bus_top.v uart_bench/timescale.v
 VERILOG = iverilog
 WAVE = gtkwave
 
